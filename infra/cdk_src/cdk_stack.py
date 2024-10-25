@@ -7,7 +7,7 @@ from typing import Optional
 # External Dependencies:
 from aws_cdk import Stack, CfnParameter, CfnOutput
 from constructs import Construct
-from aws_cdk import aws_ec2
+from aws_cdk import aws_ec2, aws_iam
 
 # Local Dependencies:
 from .prompt_app import PromptEngineeringApp
@@ -26,6 +26,62 @@ class LLMEvalWkshpStack(Stack):
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
+
+        bedrock_role = aws_iam.Role(
+            self,
+            "BedrockRole",
+            assumed_by=aws_iam.CompositePrincipal(
+                aws_iam.ServicePrincipal("bedrock.amazonaws.com"),
+                # SageMaker also needed for manual evaluation jobs. See:
+                # https://docs.aws.amazon.com/bedrock/latest/userguide/model-eval--service-roles.html
+                # https://docs.aws.amazon.com/bedrock/latest/userguide/automatic-service-roles.html
+                aws_iam.ServicePrincipal("sagemaker.amazonaws.com"),
+            ),
+            description=(
+                "Bedrock Execution Role for LLM Evaluation workshop, with access to S3 buckets "
+                "SageMaker default and workshop prompt app data bucket."
+            ),
+            # Explicitly name the role so it's easier to find in console:
+            role_name="Amazon-Bedrock-LLMEvalWorkshop",
+            managed_policies=[
+                aws_iam.ManagedPolicy.from_aws_managed_policy_name("AmazonBedrockFullAccess"),
+            ],
+            inline_policies={
+                "LLMEvaluation": aws_iam.PolicyDocument(
+                    statements=[
+                        aws_iam.PolicyStatement(
+                            sid="S3Access",
+                            effect=aws_iam.Effect.ALLOW,
+                            actions=[
+                                "s3:AbortMultipartUpload",
+                                "s3:GetObject",
+                                "s3:GetBucketLocation",
+                                "s3:ListBucket",
+                                "s3:ListBucketMultipartUploads",
+                                "s3:PutObject",
+                            ],
+                            resources=[
+                                f"arn:{self.partition}:s3:::sagemaker-{self.region}-{self.account}",
+                                f"arn:{self.partition}:s3:::sagemaker-{self.region}-{self.account}/*",
+                            ],
+                            conditions={"StringEquals": {"aws:ResourceAccount": self.account}},
+                        ),
+                        aws_iam.PolicyStatement(
+                            sid="ManageA2IHumanLoops",
+                            effect=aws_iam.Effect.ALLOW,
+                            actions=[
+                                "sagemaker:DeleteHumanLoop",
+                                "sagemaker:DescribeFlowDefinition",
+                                "sagemaker:DescribeHumanLoop",
+                                "sagemaker:StartHumanLoop",
+                                "sagemaker:StopHumanLoop",
+                            ],
+                            resources=["*"],
+                        ),
+                    ],
+                ),
+            },
+        )
 
         if deploy_sagemaker_domain:
             # Shared VPC:
@@ -64,6 +120,7 @@ class LLMEvalWkshpStack(Stack):
                 cognito_demo_username=cognito_username_param.value_as_string,
                 cognito_demo_password=cognito_password_param.value_as_string,
             )
+            prompt_app.data_bucket.grant_read_write(bedrock_role)
             domain_name_output = CfnOutput(
                 self,
                 "AppDomainName",
