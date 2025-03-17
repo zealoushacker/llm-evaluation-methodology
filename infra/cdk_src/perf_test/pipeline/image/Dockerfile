@@ -1,7 +1,7 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 # Build from Amazon Linux 2023 image:
-FROM public.ecr.aws/amazonlinux/amazonlinux:latest
+FROM amazonlinux:latest
 
 ENV PYTHONUNBUFFERED=1
 

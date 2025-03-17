@@ -7,7 +7,7 @@
 #   than overriding it here. For more details see:
 #     - https://github.com/ray-project/ray/issues/43069
 #     - https://github.com/aws/fmeval/issues/183
-FROM public.ecr.aws/docker/library/python:3.10
+FROM python:3.10
 
 ARG AWS_DEFAULT_REGION=us-east-1
 

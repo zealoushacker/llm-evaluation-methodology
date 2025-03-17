@@ -10,7 +10,7 @@
     "cdk:bootstrap": "cdk bootstrap",
     "dev:app": "docker compose watch",
     "dev:watchlogs": "while :; do clear; docker compose logs -f; sleep 2; done",
-    "deploy": "npm run login:ecrpublic && cdk deploy --all",
+    "deploy": "cdk deploy --all",
     "destroy": "cdk destroy --all",
     "lint:cfn": "cfn-lint cfn_bootstrap.yaml",
     "lint:python": "black ./cdk_src ./prompt_app/src",
