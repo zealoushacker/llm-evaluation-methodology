@@ -13,7 +13,7 @@ Description: |-
 Parameters:
   CodeRepo:
     Type: String
-    Default: https://github.com/aws-samples/llm-evaluation-methodology
+    Default: https://github.com/zealoushacker/llm-evaluation-methodology
     Description: >-
       The CDK code to be deployed: A git clone-able URL, public .zip archive URL, or s3:// URI to a
       zip archive.
