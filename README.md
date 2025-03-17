@@ -42,7 +42,7 @@ To help get your evaluation strategy up and running, this repository includes:
 
 ▶️ **The simplest way to set up** is by deploying our S3-hosted AWS CloudFormation template (⚠️ Check the *AWS Region* after following the below link, and switch if needed):
 
-[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?#/stacks/create/review?templateURL=https://ws-assets-prod-iad-r-iad-ed304a55c2ca1aee.s3.us-east-1.amazonaws.com/ab6c96d3-53cf-4730-b0fe-f4762dbbb6eb/cfn_bootstrap.yaml&stackName=LLMEvalBootstrap "Launch Stack")
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home?#/stacks/create/review?templateURL=https://raw.githubusercontent.com/zealoushacker/llm-evaluation-methodology/refs/heads/main/infra/cfn_bootstrap.yaml&stackName=LLMEvalBootstrap "Launch Stack")
 
 Alternatively, to guarantee you're in sync with the latest code updates, you can download the template from [infra/cfn_bootstrap.yaml](infra/cfn_bootstrap.yaml) and then [deploy it from the AWS CloudFormation console](https://console.aws.amazon.com/cloudformation/home?#/stacks/create).
 
